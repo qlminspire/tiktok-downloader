@@ -1,19 +1,25 @@
 ﻿using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 
-using TikTok.Downloader.Models;
+using TikTok.Downloader.Core.Configurations;
+using TikTok.Downloader.Core.Models;
 
-namespace TikTok.Downloader.Services.Downloader;
+namespace TikTok.Downloader.Core.Services.Downloader;
 
-internal sealed class TikTokDownloader : ITikTokDownloader
+internal sealed class TikTokVideoDownloader : ITikTokVideoDownloader
 {
-    private const string TikTokBaseUrl = "https://www.tiktokv.com/share/video";
+    private readonly ITikTokDownloaderConfiguration _configuration;
 
     private static readonly HttpClient _httpClient = new();
 
+    public TikTokVideoDownloader(ITikTokDownloaderConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     public Task<byte[]> Download(string videoId, CancellationToken cancellationToken)
     {
-        return Download(new TikTokVideo(videoId, $"{TikTokBaseUrl}/{videoId}"), cancellationToken);
+        return Download(new TikTokVideo($"{_configuration.TikTokVideoBaseUrl}/{videoId}"), cancellationToken);
     }
 
     public async Task<byte[]> Download(TikTokVideo tikTokVideo, CancellationToken cancellationToken = default)

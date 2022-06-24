@@ -1,6 +1,6 @@
-﻿using TikTok.Downloader.Models;
+﻿using TikTok.Downloader.Core.Models;
 
-namespace TikTok.Downloader.Services.Parser;
+namespace TikTok.Downloader.Core.Services.Parser;
 
 public interface ITikTokFavoriteVideoLinkParser
 {

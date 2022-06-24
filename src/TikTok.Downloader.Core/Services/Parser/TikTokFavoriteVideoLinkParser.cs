@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using TikTok.Downloader.Models;
+using TikTok.Downloader.Core.Models;
 
-namespace TikTok.Downloader.Services.Parser;
+namespace TikTok.Downloader.Core.Services.Parser;
 
 internal sealed class TikTokFavoriteVideoLinkParser : ITikTokFavoriteVideoLinkParser
 {
@@ -17,7 +17,7 @@ internal sealed class TikTokFavoriteVideoLinkParser : ITikTokFavoriteVideoLinkPa
             var jObject = await JToken.ReadFromAsync(reader, cancellationToken) as JObject;
             var favoriteLinks = jObject["Activity"]?["Favorite Videos"]?["FavoriteVideoList"]?.Select(x => x["Link"]?.Value<string>());
 
-            links = favoriteLinks.Select(link => new TikTokVideo(Id: link.Split("/")[^2], link)).ToList();
+            links = favoriteLinks.Select(link => new TikTokVideo(link)).ToList();
         }
 
         return links;

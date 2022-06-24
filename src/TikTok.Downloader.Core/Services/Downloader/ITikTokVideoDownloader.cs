@@ -1,8 +1,8 @@
-﻿using TikTok.Downloader.Models;
+﻿using TikTok.Downloader.Core.Models;
 
-namespace TikTok.Downloader.Services.Downloader;
+namespace TikTok.Downloader.Core.Services.Downloader;
 
-public interface ITikTokDownloader
+public interface ITikTokVideoDownloader
 {
     Task<byte[]> Download(string videoId, CancellationToken cancellationToken = default);
     Task<byte[]> Download(TikTokVideo tikTokVideo, CancellationToken cancellationToken = default);

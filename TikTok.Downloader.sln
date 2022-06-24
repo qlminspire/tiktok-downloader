@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TikTok.Downloader.Console", "TikTok.Downloader.Console\TikTok.Downloader.Console.csproj", "{6B7ECA23-1E35-4F5C-9539-16F79AE860CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TikTok.Downloader.Core", "src\TikTok.Downloader.Core\TikTok.Downloader.Core.csproj", "{F533C9E1-40F2-4921-AD64-CDBF7B3832B0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TikTok.Downloader.Console", "src\TikTok.Downloader.Console\TikTok.Downloader.Console.csproj", "{A2BFFE42-4277-4FFE-85F1-058260A1F7D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6B7ECA23-1E35-4F5C-9539-16F79AE860CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B7ECA23-1E35-4F5C-9539-16F79AE860CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B7ECA23-1E35-4F5C-9539-16F79AE860CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B7ECA23-1E35-4F5C-9539-16F79AE860CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F533C9E1-40F2-4921-AD64-CDBF7B3832B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F533C9E1-40F2-4921-AD64-CDBF7B3832B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F533C9E1-40F2-4921-AD64-CDBF7B3832B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F533C9E1-40F2-4921-AD64-CDBF7B3832B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2BFFE42-4277-4FFE-85F1-058260A1F7D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2BFFE42-4277-4FFE-85F1-058260A1F7D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2BFFE42-4277-4FFE-85F1-058260A1F7D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2BFFE42-4277-4FFE-85F1-058260A1F7D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "TikTok.Downloader.Console": {
+      "commandName": "Project"
+    }
+  }
+}
