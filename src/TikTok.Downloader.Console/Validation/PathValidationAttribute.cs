@@ -6,7 +6,7 @@ internal sealed class PathValidationAttribute : ValidationAttribute
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-        if (value is string path && Directory.Exists(path))
+        if (value is string path && (File.Exists(path) || Directory.Exists(path)))
         {
             return ValidationResult.Success;
         }
