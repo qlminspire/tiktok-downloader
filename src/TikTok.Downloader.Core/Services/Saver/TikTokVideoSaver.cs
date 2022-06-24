@@ -24,13 +24,12 @@ namespace TikTok.Downloader.Core.Services.Saver
             {
                 var downloadedVideo = await _tikTokDownloader.Download(tikTokVideo);
                 await SaveVideo(tikTokVideo.Id, downloadedVideo, outputPath);
+                Console.WriteLine($"Downloaded {tikTokVideo}");
             }
             catch (Exception exception)
             {
                 Console.WriteLine($"Can't download {tikTokVideo}. Exception: {exception.Message}");
             }
-
-            Console.WriteLine($"Downloaded {tikTokVideo}");
         }
 
         public async Task SaveMany(ICollection<TikTokVideo> tikTokVideos, string outputPath, int batchSize = 1)
