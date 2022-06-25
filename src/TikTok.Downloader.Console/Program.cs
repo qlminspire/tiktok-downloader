@@ -1,5 +1,5 @@
 ﻿using Cocona;
-
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 using TikTok.Downloader.Console.Validation;
@@ -12,6 +12,7 @@ using TikTok.Downloader.Core.Services.Saver;
 var builder = CoconaApp.CreateBuilder();
 
 builder.Services.RegisterDownloaderDependencies();
+builder.Logging.AddConsole();
 
 var app = builder.Build();
 

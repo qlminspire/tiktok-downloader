@@ -8,27 +8,28 @@ namespace TikTok.Downloader.Core.Services.Saver
     internal sealed class TikTokVideoSaver : ITikTokVideoSaver
     {
         private readonly ITikTokVideoDownloader _tikTokDownloader;
-        //private readonly ILogger _logger;
+        private readonly ILogger<TikTokVideoSaver> _logger;
 
-        public TikTokVideoSaver(ITikTokVideoDownloader tikTokDownloader
-            //ILogger logger
+        public TikTokVideoSaver(ITikTokVideoDownloader tikTokDownloader,
+            ILogger<TikTokVideoSaver> logger
             )
         {
             _tikTokDownloader = tikTokDownloader;
-            //_logger = logger;
+            _logger = logger;
         }
 
         public async Task Save(TikTokVideo tikTokVideo, string outputPath)
         {
             try
             {
+                _logger.LogInformation($"Start downloading {tikTokVideo}");
                 var downloadedVideo = await _tikTokDownloader.Download(tikTokVideo);
                 await SaveVideo(tikTokVideo.Id, downloadedVideo, outputPath);
-                Console.WriteLine($"Downloaded {tikTokVideo}");
+                _logger.LogInformation($"Downloaded {tikTokVideo}");
             }
             catch (Exception exception)
             {
-                Console.WriteLine($"Can't download {tikTokVideo}. Exception: {exception.Message}");
+                _logger.LogWarning($"Can't download {tikTokVideo}. Exception: {exception.Message}");
             }
         }
 
