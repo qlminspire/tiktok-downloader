@@ -34,7 +34,8 @@ namespace TikTok.Downloader.Core.Services.Saver
 
         public async Task SaveMany(ICollection<TikTokVideo> tikTokVideos, string outputPath, int batchSize = 1)
         {
-            var batchIterations = tikTokVideos.Count / batchSize;
+            var hasPartialIteration = (tikTokVideos.Count % batchSize) > 0; 
+            var batchIterations = (tikTokVideos.Count / batchSize) + (hasPartialIteration ? 1 : 0);
 
             for (var i = 0; i < batchIterations; i++)
             {
