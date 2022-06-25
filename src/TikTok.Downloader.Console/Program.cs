@@ -26,10 +26,14 @@ app.AddCommand("json", async (ITikTokFavoriteVideoLinkParser tikTokFavoriteVideo
    [Option('p', Description = "Path to TikTok profile json file (user_data.json)")][PathValidation] string path,
    [Option('o', Description = "Path to output folder")][PathValidation] string outputPath,
    [Option('b', Description = "How many items download at a time")][Range(1, 25)] int batchSize,
+   [Option('d', Description = "Download videos with date after specified")][DateValidation] string? afterDate,
    [Option('l', Description = "Maximum amount of items to download")] int? limit
 ) =>
 {
     var tikTokVideoLinks = await tikTokFavoriteVideoLinkParser.Parse(path);
+
+    if(DateTimeOffset.TryParse(afterDate, out var date))
+        tikTokVideoLinks = tikTokVideoLinks.OrderBy(link => link.Date).Where(link => link.Date.Value > date).ToList();
 
     if (limit.HasValue)
         tikTokVideoLinks = tikTokVideoLinks.Take(limit.Value).ToList();

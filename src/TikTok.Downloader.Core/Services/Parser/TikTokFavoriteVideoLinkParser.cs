@@ -15,9 +15,9 @@ internal sealed class TikTokFavoriteVideoLinkParser : ITikTokFavoriteVideoLinkPa
         using (JsonTextReader reader = new(file))
         {
             var jObject = await JToken.ReadFromAsync(reader, cancellationToken) as JObject;
-            var favoriteLinks = jObject["Activity"]?["Favorite Videos"]?["FavoriteVideoList"]?.Select(x => x["Link"]?.Value<string>());
+            var favoriteVideos = jObject["Activity"]?["Favorite Videos"]?["FavoriteVideoList"];
 
-            links = favoriteLinks.Select(link => new TikTokVideo(link)).ToList();
+            links = favoriteVideos.Select(x => new TikTokVideo(x["Link"]?.Value<string>(), DateTimeOffset.Parse(x["Date"]?.Value<string>()))).ToList();
         }
 
         return links;

@@ -11,6 +11,6 @@ internal sealed class PathValidationAttribute : ValidationAttribute
             return ValidationResult.Success;
         }
 
-        return new ValidationResult($"Invalid value provided to parameter \"{validationContext.DisplayName}\". The path \"{value}\" is not exists.");
+        return new ValidationResult($"The field {validationContext.DisplayName} must be existing file or folder. Provided path: \"{value}\"");
     }
 }
