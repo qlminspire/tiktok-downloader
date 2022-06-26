@@ -1,6 +1,10 @@
-﻿namespace TikTok.Downloader.Core.Models;
+﻿using System.Text.RegularExpressions;
+
+namespace TikTok.Downloader.Core.Models;
 
 public record TikTokVideo(string Link, DateTimeOffset? Date = null)
 {
-    public string Id => Link?.Split("/")?[^2];
+    private readonly Regex IdRegex = new(@"(video\/)(\w+)");
+
+    public string Id => IdRegex.Match(Link).Groups[2].Value;
 }

@@ -29,7 +29,7 @@ namespace TikTok.Downloader.Core.Services.Saver
             }
             catch (Exception exception)
             {
-                _logger.LogWarning($"Can't download {tikTokVideo}. Exception: {exception.Message}");
+                _logger.LogInformation($"Can't download {tikTokVideo}. {exception}");
             }
         }
 
