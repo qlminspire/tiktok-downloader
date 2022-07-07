@@ -6,19 +6,22 @@
 		<RootNamespace>TikTok.Downloader.Console</RootNamespace>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
-		
+
 		<AssemblyName>tiktok-downloader</AssemblyName>
 
-		<PublishSingleFile>true</PublishSingleFile>
+		<!--<PublishSingleFile>true</PublishSingleFile>
 		<SelfContained>true</SelfContained>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<ApplicationIcon>Resources\tiktok.ico</ApplicationIcon>
-		<DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>-->
+		<PackAsTool>true</PackAsTool>
+		<ToolCommandName>tiktok-downloader</ToolCommandName>
+		<PackageOutputPath>./nupkg</PackageOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Include="Resources\tiktok.ico" />
+		<Content Include="Resources\tiktok.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -30,7 +33,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\TikTok.Downloader.Core\TikTok.Downloader.Core.csproj" />
+		<ProjectReference Include="..\TikTok.Downloader.Core\TikTok.Downloader.Core.csproj" />
 	</ItemGroup>
 
 </Project>
