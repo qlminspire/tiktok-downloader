@@ -16,11 +16,11 @@ builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-app.AddCommand("link", async (ITikTokVideoSaver tikTokVideoSaver,
-    [Option('u', Description = "TikTok video url")][UrlValidation] string url,
+app.AddCommand("url", async (ITikTokVideoSaver tikTokVideoSaver,
+    [Option('p', Description = "TikTok video url")][UrlValidation] string path,
     [Option('o', Description = "Path to output folder")][PathValidation] string outputPath) =>
 {
-    await tikTokVideoSaver.Save(new TikTokVideo(url), outputPath);
+    await tikTokVideoSaver.Save(new TikTokVideo(path), outputPath);
 });
 
 app.AddCommand("json", async (ITikTokFavoriteVideoLinkParser tikTokFavoriteVideoLinkParser, ITikTokVideoSaver tikTokVideoSaver,
