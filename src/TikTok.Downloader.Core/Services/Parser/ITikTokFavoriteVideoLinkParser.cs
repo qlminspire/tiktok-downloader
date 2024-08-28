@@ -4,5 +4,5 @@ namespace TikTok.Downloader.Core.Services.Parser;
 
 public interface ITikTokFavoriteVideoLinkParser
 {
-    Task<ICollection<TikTokVideo>> Parse(string path, CancellationToken cancellationToken = default);
+    Task<ICollection<TikTokVideo>> ParseAsync(string path, CancellationToken cancellationToken = default);
 }

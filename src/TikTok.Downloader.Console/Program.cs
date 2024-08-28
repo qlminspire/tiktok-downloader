@@ -20,7 +20,7 @@ app.AddCommand("url", async (ITikTokVideoSaver tikTokVideoSaver,
     [Option('p', Description = "TikTok video url")][UrlValidation] string path,
     [Option('o', Description = "Path to output folder")][PathValidation] string outputPath) =>
 {
-    await tikTokVideoSaver.Save(new TikTokVideo(path), outputPath);
+    await tikTokVideoSaver.SaveAsync(new TikTokVideo(path), outputPath);
 });
 
 app.AddCommand("json", async (ITikTokFavoriteVideoLinkParser tikTokFavoriteVideoLinkParser, ITikTokVideoSaver tikTokVideoSaver,
@@ -31,7 +31,7 @@ app.AddCommand("json", async (ITikTokFavoriteVideoLinkParser tikTokFavoriteVideo
    [Option('l', Description = "Maximum amount of items to download")] int? limit
 ) =>
 {
-    var tikTokVideoLinks = await tikTokFavoriteVideoLinkParser.Parse(path);
+    var tikTokVideoLinks = await tikTokFavoriteVideoLinkParser.ParseAsync(path);
 
     if(DateTimeOffset.TryParse(afterDate, out var date))
         tikTokVideoLinks = tikTokVideoLinks.OrderBy(link => link.Date).Where(link => link.Date.Value > date).ToList();
@@ -39,7 +39,7 @@ app.AddCommand("json", async (ITikTokFavoriteVideoLinkParser tikTokFavoriteVideo
     if (limit.HasValue)
         tikTokVideoLinks = tikTokVideoLinks.Take(limit.Value).ToList();
 
-    await tikTokVideoSaver.SaveMany(tikTokVideoLinks, outputPath, batchSize);
+    await tikTokVideoSaver.SaveManyAsync(tikTokVideoLinks, outputPath, batchSize);
 });
 
 app.Run();

@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 using TikTok.Downloader.Core.Configurations;
@@ -9,38 +10,64 @@ namespace TikTok.Downloader.Core.Services.Downloader;
 internal sealed class TikTokVideoDownloader : ITikTokVideoDownloader
 {
     private readonly ITikTokDownloaderConfiguration _configuration;
+    private readonly ILogger<TikTokVideoDownloader> _logger;
 
-    private static readonly HttpClient _httpClient = new();
+    private static readonly HttpClient HttpClient = new();
 
-    public TikTokVideoDownloader(ITikTokDownloaderConfiguration configuration)
+    public TikTokVideoDownloader(ITikTokDownloaderConfiguration configuration, 
+        ILogger<TikTokVideoDownloader> logger)
     {
         _configuration = configuration;
+        _logger = logger;
     }
 
-    public Task<byte[]> Download(string videoId, CancellationToken cancellationToken)
+    public Task<byte[]> DownloadAsync(string videoId, CancellationToken cancellationToken)
     {
-        return Download(new TikTokVideo($"{_configuration.TikTokVideoBaseUrl}/{videoId}"), cancellationToken);
+        return DownloadAsync(new TikTokVideo($"{_configuration.TikTokVideoBaseUrl}/{videoId}"), cancellationToken);
     }
 
-    public async Task<byte[]> Download(TikTokVideo tikTokVideo, CancellationToken cancellationToken = default)
+    public async Task<byte[]> DownloadAsync(TikTokVideo tikTokVideo, CancellationToken cancellationToken = default)
     {
-        var downloadLink = await GetDownloadLink(tikTokVideo, cancellationToken);
-        return await DownloadVideo(downloadLink, cancellationToken);
+        try
+        {
+            var downloadLink = await GetVideoDownloadLinkAsync(tikTokVideo, cancellationToken);
+            if (string.IsNullOrWhiteSpace(downloadLink))
+            {
+                _logger.LogInformation("Failed to fetch download link for video: {video}. The downloading for this video will be skipped", tikTokVideo);
+                return [];
+            }
+
+            _logger.LogInformation("Start downloading video: {video}", tikTokVideo);
+
+            var downloadedVideo = await DownloadVideoAsync(downloadLink, cancellationToken);
+
+            _logger.LogInformation("Downloading completed for video: {video}", tikTokVideo);
+            
+            return downloadedVideo;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning("Failed to download video: {video}. {exception}", tikTokVideo, exception.Message);
+        }
+        
+        return [];
     }
 
-    private static async Task<string> GetDownloadLink(TikTokVideo video, CancellationToken cancellationToken = default)
+    private static async Task<string?> GetVideoDownloadLinkAsync(TikTokVideo video, CancellationToken cancellationToken = default)
     {
         var htmlWeb = new HtmlWeb();
         var htmlDocument = await htmlWeb.LoadFromWebAsync(video.Link, cancellationToken);
 
-        var sigiStateElement = htmlDocument.GetElementbyId("SIGI_STATE");
-        var sigiStateElementJObject = JObject.Parse(sigiStateElement.InnerText);
+        var baseHtmlElement = htmlDocument.GetElementbyId("__UNIVERSAL_DATA_FOR_REHYDRATION__");
+        var baseHtmlElementJObject = JObject.Parse(baseHtmlElement.InnerText);
 
-        return sigiStateElementJObject["ItemModule"]?[video.Id]?["video"]?["downloadAddr"]?.Value<string>();
+        var videoJObject =
+            baseHtmlElementJObject["__DEFAULT_SCOPE__"]?["webapp.video-detail"]?["itemInfo"]?["itemStruct"]?["video"];
+       return videoJObject?["bitrateInfo"]?.MinBy(x => x["QualityType"]?.Value<int>())?["PlayAddr"]?["UrlList"]?.LastOrDefault()?.Value<string>();
     }
 
-    private static async Task<byte[]> DownloadVideo(string downloadLink, CancellationToken cancellationToken = default)
+    private static Task<byte[]> DownloadVideoAsync(string downloadLink, CancellationToken cancellationToken = default)
     {
-        return await _httpClient.GetByteArrayAsync(downloadLink, cancellationToken);
+        return HttpClient.GetByteArrayAsync(downloadLink, cancellationToken);
     }
 }

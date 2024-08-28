@@ -7,19 +7,26 @@ namespace TikTok.Downloader.Core.Services.Parser;
 
 internal sealed class TikTokFavoriteVideoLinkParser : ITikTokFavoriteVideoLinkParser
 {
-    public async Task<ICollection<TikTokVideo>> Parse(string path, CancellationToken cancellationToken = default)
+    public async Task<ICollection<TikTokVideo>> ParseAsync(string path, CancellationToken cancellationToken = default)
     {
-        var links = new List<TikTokVideo>();
-
-        using (StreamReader file = File.OpenText(path))
-        using (JsonTextReader reader = new(file))
+        using var file = File.OpenText(path);
+        await using JsonTextReader jsonReader = new(file);
+        
+        var json = await JToken.ReadFromAsync(jsonReader, cancellationToken) as JObject;
+        var favoriteVideoJson = json?["Activity"]?["Favorite Videos"]?["FavoriteVideoList"];
+        
+        var tikTokVideos = favoriteVideoJson?.Select(x =>
         {
-            var jObject = await JToken.ReadFromAsync(reader, cancellationToken) as JObject;
-            var favoriteVideos = jObject["Activity"]?["Favorite Videos"]?["FavoriteVideoList"];
+            var link = x["Link"]?.Value<string>()?.Trim();
+            
+            DateTimeOffset.TryParse(x["Date"]?.Value<string>(), out var date);
 
-            links = favoriteVideos.Select(x => new TikTokVideo(x["Link"]?.Value<string>(), DateTimeOffset.Parse(x["Date"]?.Value<string>()))).ToList();
-        }
+            return !string.IsNullOrWhiteSpace(link) 
+                ? new TikTokVideo(link, date) 
+                : null;
+        }).Where(x => x is not null)
+            .ToList() ?? [];
 
-        return links;
+        return tikTokVideos;
     }
 }

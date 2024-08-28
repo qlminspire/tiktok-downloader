@@ -1,7 +1,6 @@
-﻿namespace TikTok.Downloader.Core.Configurations
+﻿namespace TikTok.Downloader.Core.Configurations;
+
+public interface ITikTokDownloaderConfiguration
 {
-    public interface ITikTokDownloaderConfiguration
-    {
-        string TikTokVideoBaseUrl { get; }
-    }
+    string TikTokVideoBaseUrl { get; }
 }

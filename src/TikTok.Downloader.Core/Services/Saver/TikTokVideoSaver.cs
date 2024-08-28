@@ -1,56 +1,59 @@
 ﻿using Microsoft.Extensions.Logging;
-
 using TikTok.Downloader.Core.Models;
 using TikTok.Downloader.Core.Services.Downloader;
 
-namespace TikTok.Downloader.Core.Services.Saver
+namespace TikTok.Downloader.Core.Services.Saver;
+
+internal sealed class TikTokVideoSaver : ITikTokVideoSaver
 {
-    internal sealed class TikTokVideoSaver : ITikTokVideoSaver
+    private readonly ILogger<TikTokVideoSaver> _logger;
+    private readonly ITikTokVideoDownloader _tikTokDownloader;
+
+    public TikTokVideoSaver(ITikTokVideoDownloader tikTokDownloader,
+        ILogger<TikTokVideoSaver> logger
+    )
     {
-        private readonly ITikTokVideoDownloader _tikTokDownloader;
-        private readonly ILogger<TikTokVideoSaver> _logger;
+        _tikTokDownloader = tikTokDownloader;
+        _logger = logger;
+    }
 
-        public TikTokVideoSaver(ITikTokVideoDownloader tikTokDownloader,
-            ILogger<TikTokVideoSaver> logger
-            )
+    public async Task SaveAsync(TikTokVideo tikTokVideo, string outputPath)
+    {
+        var downloadedVideo = await _tikTokDownloader.DownloadAsync(tikTokVideo);
+        if (downloadedVideo.Length == 0)
+            return;
+
+        await SaveVideoAsync(tikTokVideo.Id, downloadedVideo, outputPath);
+    }
+
+    public async Task SaveManyAsync(ICollection<TikTokVideo> tikTokVideos, string outputPath, int batchSize = 1)
+    {
+        var hasPartialIteration = (tikTokVideos.Count % batchSize) > 0;
+        var batchIterations = (tikTokVideos.Count / batchSize) + (hasPartialIteration ? 1 : 0);
+
+        for (var i = 0; i < batchIterations; i++)
         {
-            _tikTokDownloader = tikTokDownloader;
-            _logger = logger;
+            var linksBatch = tikTokVideos.Skip(i * batchSize).Take(batchSize);
+
+            var saveTasks = linksBatch.Select(link => SaveAsync(link, outputPath));
+            await Task.WhenAll(saveTasks);
         }
+    }
 
-        public async Task Save(TikTokVideo tikTokVideo, string outputPath)
+    private async Task SaveVideoAsync(string videoId, byte[] video, string outputPath,
+        CancellationToken cancellationToken = default)
+    {
+        try
         {
-            try
-            {
-                _logger.LogInformation($"Start downloading {tikTokVideo}");
-                var downloadedVideo = await _tikTokDownloader.Download(tikTokVideo);
-                await SaveVideo(tikTokVideo.Id, downloadedVideo, outputPath);
-                _logger.LogInformation($"Downloaded {tikTokVideo}");
-            }
-            catch (Exception exception)
-            {
-                _logger.LogInformation($"Can't download {tikTokVideo}. {exception}");
-            }
-        }
+            var path = Path.ChangeExtension(Path.Combine(outputPath, videoId), "mp4");
 
-        public async Task SaveMany(ICollection<TikTokVideo> tikTokVideos, string outputPath, int batchSize = 1)
-        {
-            var hasPartialIteration = (tikTokVideos.Count % batchSize) > 0; 
-            var batchIterations = (tikTokVideos.Count / batchSize) + (hasPartialIteration ? 1 : 0);
-
-            for (var i = 0; i < batchIterations; i++)
-            {
-                var linksBatch = tikTokVideos.Skip(i * batchSize).Take(batchSize);
-
-                var saveTasks = linksBatch.Select(link => Save(link, outputPath));
-                await Task.WhenAll(saveTasks);
-            }
-        }
-
-        static async Task SaveVideo(string videoId, byte[] video, string outputPath, CancellationToken cancellationToken = default)
-        {
-            using var streamWriter = File.Create(@$"{outputPath}\{videoId}.mp4");
+            await using var streamWriter = File.Create(path);
             await streamWriter.WriteAsync(video, cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError("Failed to save video {videoId} to '{path}'. {exception}", videoId, outputPath,
+                exception.Message);
         }
     }
 }

@@ -7,6 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TikTok.Downloader.Core", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TikTok.Downloader.Console", "src\TikTok.Downloader.Console\TikTok.Downloader.Console.csproj", "{A2BFFE42-4277-4FFE-85F1-058260A1F7D3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5146C460-3A44-42BC-B44B-E77ECA181C02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D7F1EF6D-1FC8-4ABF-9EE1-F4266182598B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TikTok.Downloader.Tests.Integration", "tests\TikTok.Downloader.Tests.Integration\TikTok.Downloader.Tests.Integration.csproj", "{0EB4BCB5-4B33-4354-8974-8219DD5DC6E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,11 +27,20 @@ Global
 		{A2BFFE42-4277-4FFE-85F1-058260A1F7D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2BFFE42-4277-4FFE-85F1-058260A1F7D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2BFFE42-4277-4FFE-85F1-058260A1F7D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EB4BCB5-4B33-4354-8974-8219DD5DC6E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EB4BCB5-4B33-4354-8974-8219DD5DC6E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EB4BCB5-4B33-4354-8974-8219DD5DC6E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EB4BCB5-4B33-4354-8974-8219DD5DC6E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1BE5F43C-435D-4A9A-B5D8-063E8C03399A}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A2BFFE42-4277-4FFE-85F1-058260A1F7D3} = {5146C460-3A44-42BC-B44B-E77ECA181C02}
+		{F533C9E1-40F2-4921-AD64-CDBF7B3832B0} = {5146C460-3A44-42BC-B44B-E77ECA181C02}
+		{0EB4BCB5-4B33-4354-8974-8219DD5DC6E7} = {D7F1EF6D-1FC8-4ABF-9EE1-F4266182598B}
 	EndGlobalSection
 EndGlobal

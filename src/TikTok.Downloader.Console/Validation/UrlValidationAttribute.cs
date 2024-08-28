@@ -6,9 +6,8 @@ internal sealed class UrlValidationAttribute: ValidationAttribute
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-        if(Uri.TryCreate(value as string, UriKind.Absolute, out var _))
-            return ValidationResult.Success;
-
-        return new ValidationResult($"The field {validationContext.DisplayName} must be valid url. Provided url: \"{value}\"");
+        return Uri.TryCreate(value as string, UriKind.Absolute, out _) 
+            ? ValidationResult.Success 
+            : new ValidationResult($"The field {validationContext.DisplayName} must be valid url. Provided url: \"{value}\"");
     }
 }
