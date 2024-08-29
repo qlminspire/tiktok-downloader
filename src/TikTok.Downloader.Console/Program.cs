@@ -1,9 +1,8 @@
-﻿using Cocona;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
+using Cocona;
 using Microsoft.Extensions.Logging;
-using System.ComponentModel.DataAnnotations;
-
 using TikTok.Downloader.Console.Validation;
-
 using TikTok.Downloader.Core;
 using TikTok.Downloader.Core.Models;
 using TikTok.Downloader.Core.Services.Parser;
@@ -17,23 +16,32 @@ builder.Logging.AddConsole();
 var app = builder.Build();
 
 app.AddCommand("url", async (ITikTokVideoSaver tikTokVideoSaver,
-    [Option('p', Description = "TikTok video url")][UrlValidation] string path,
-    [Option('o', Description = "Path to output folder")][PathValidation] string outputPath) =>
+    [Option('p', Description = "TikTok video url")] [UrlValidation]
+    string path,
+    [Option('o', Description = "Path to output folder")] [PathValidation]
+    string outputPath) =>
 {
     await tikTokVideoSaver.SaveAsync(new TikTokVideo(path), outputPath);
 });
 
-app.AddCommand("json", async (ITikTokFavoriteVideoLinkParser tikTokFavoriteVideoLinkParser, ITikTokVideoSaver tikTokVideoSaver,
-   [Option('p', Description = "Path to TikTok profile json file (user_data.json)")][PathValidation] string path,
-   [Option('o', Description = "Path to output folder")][PathValidation] string outputPath,
-   [Option('b', Description = "How many items download at a time")][Range(1, 25)] int batchSize,
-   [Option('d', Description = "Download videos with date after specified")][DateValidation] string? afterDate,
-   [Option('l', Description = "Maximum amount of items to download")] int? limit
+app.AddCommand("json", async (ITikTokFavoriteVideosLinkParser tikTokFavoriteVideoLinkParser,
+    ITikTokVideoSaver tikTokVideoSaver,
+    [Option('p', Description = "Path to TikTok profile json file (user_data.json)")] [PathValidation]
+    string path,
+    [Option('o', Description = "Path to output folder")] [PathValidation]
+    string outputPath,
+    [Option('b', Description = "How many items download at a time")] [Range(1, 25)]
+    int batchSize,
+    [Option('d', Description = "Download videos with date after specified")] [DateValidation]
+    string? afterDate,
+    [Option('l', Description = "Maximum amount of items to download")]
+    int? limit
 ) =>
 {
-    var tikTokVideoLinks = await tikTokFavoriteVideoLinkParser.ParseAsync(path);
+    var tikTokUserDataJson = await File.ReadAllTextAsync(path, Encoding.UTF8);
+    var tikTokVideoLinks = tikTokFavoriteVideoLinkParser.Parse(tikTokUserDataJson);
 
-    if(DateTimeOffset.TryParse(afterDate, out var date))
+    if (DateTimeOffset.TryParse(afterDate, out var date))
         tikTokVideoLinks = tikTokVideoLinks.OrderBy(link => link.Date).Where(link => link.Date.Value > date).ToList();
 
     if (limit.HasValue)
@@ -43,4 +51,3 @@ app.AddCommand("json", async (ITikTokFavoriteVideoLinkParser tikTokFavoriteVideo
 });
 
 app.Run();
-

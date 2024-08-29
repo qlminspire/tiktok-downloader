@@ -1,39 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
-		<RootNamespace>TikTok.Downloader.Console</RootNamespace>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>TikTok.Downloader.Console</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
 
-		<AssemblyName>tiktok-downloader</AssemblyName>
+        <AssemblyName>tiktok-downloader</AssemblyName>
+		
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>tiktok-downloader</ToolCommandName>
+        <PackageOutputPath>./nupkg</PackageOutputPath>
+        <ApplicationIcon>Resources\tiktok.ico</ApplicationIcon>
+        <PackageIcon>tiktok.ico</PackageIcon>
+    </PropertyGroup>
 
-		<!--<PublishSingleFile>true</PublishSingleFile>
-		<SelfContained>true</SelfContained>
-		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-		<ApplicationIcon>Resources\tiktok.ico</ApplicationIcon>
-		<DebugType>embedded</DebugType>-->
-		<PackAsTool>true</PackAsTool>
-		<ToolCommandName>tiktok-downloader</ToolCommandName>
-		<PackageOutputPath>./nupkg</PackageOutputPath>
-	</PropertyGroup>
+    <ItemGroup>
+        <Content Include="Resources\tiktok.ico"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<Content Include="Resources\tiktok.ico" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Cocona" Version="2.2.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Cocona" Version="2.2.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\TikTok.Downloader.Core\TikTok.Downloader.Core.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\TikTok.Downloader.Core\TikTok.Downloader.Core.csproj"/>
+    </ItemGroup>
 
 </Project>
