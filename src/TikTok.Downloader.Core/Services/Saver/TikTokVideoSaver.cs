@@ -52,7 +52,7 @@ internal sealed class TikTokVideoSaver : ITikTokVideoSaver
         }
         catch (Exception exception)
         {
-            _logger.LogError("Failed to save video {videoId} to '{path}'. {exception}", videoId, outputPath,
+            _logger.LogWarning("Failed to save video {videoId} to '{path}'. {exception}", videoId, outputPath,
                 exception.Message);
         }
     }

@@ -1,69 +1,56 @@
-﻿using HtmlAgilityPack;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-
-using TikTok.Downloader.Core.Configurations;
+﻿using Microsoft.Extensions.Logging;
 using TikTok.Downloader.Core.Models;
+using TikTok.Downloader.Core.Services.Parser;
 
 namespace TikTok.Downloader.Core.Services.Downloader;
 
 internal sealed class TikTokVideoDownloader : ITikTokVideoDownloader
 {
-    private readonly ITikTokDownloaderConfiguration _configuration;
-    private readonly ILogger<TikTokVideoDownloader> _logger;
-
     private static readonly HttpClient HttpClient = new();
+    private readonly ILogger<TikTokVideoDownloader> _logger;
+    private readonly ITikTokVideoDownloadLinkParser _tikTokVideoDownloadLinkParser;
 
-    public TikTokVideoDownloader(ITikTokDownloaderConfiguration configuration, 
-        ILogger<TikTokVideoDownloader> logger)
+    public TikTokVideoDownloader(ITikTokVideoDownloadLinkParser tikTokVideoDownloadLinkParser,
+        ILogger<TikTokVideoDownloader> logger
+    )
     {
-        _configuration = configuration;
         _logger = logger;
-    }
-
-    public Task<byte[]> DownloadAsync(string videoId, CancellationToken cancellationToken)
-    {
-        return DownloadAsync(new TikTokVideo($"{_configuration.TikTokVideoBaseUrl}/{videoId}"), cancellationToken);
+        _tikTokVideoDownloadLinkParser = tikTokVideoDownloadLinkParser;
     }
 
     public async Task<byte[]> DownloadAsync(TikTokVideo tikTokVideo, CancellationToken cancellationToken = default)
     {
         try
         {
-            var downloadLink = await GetVideoDownloadLinkAsync(tikTokVideo, cancellationToken);
+            var downloadLink = await GetVideoDownloadLinkAsync(tikTokVideo.Link, cancellationToken);
             if (string.IsNullOrWhiteSpace(downloadLink))
             {
-                _logger.LogInformation("Failed to fetch download link for video: {video}. The downloading for this video will be skipped", tikTokVideo);
+                _logger.LogInformation(
+                    "Failed to fetch download link for video: '{video}'. The downloading for this video will be skipped",
+                    tikTokVideo.Link);
                 return [];
             }
 
-            _logger.LogInformation("Start downloading video: {video}", tikTokVideo);
+            _logger.LogTrace("Start downloading video: '{video}'", tikTokVideo.Link);
 
             var downloadedVideo = await DownloadVideoAsync(downloadLink, cancellationToken);
 
-            _logger.LogInformation("Downloading completed for video: {video}", tikTokVideo);
-            
+            _logger.LogTrace("Downloading completed for video: '{video}'", tikTokVideo.Link);
+
             return downloadedVideo;
         }
         catch (Exception exception)
         {
-            _logger.LogWarning("Failed to download video: {video}. {exception}", tikTokVideo, exception.Message);
+            _logger.LogWarning("Failed to download video: '{video}'. {exception}", tikTokVideo.Link, exception.Message);
         }
-        
+
         return [];
     }
 
-    private static async Task<string?> GetVideoDownloadLinkAsync(TikTokVideo video, CancellationToken cancellationToken = default)
+    private async Task<string?> GetVideoDownloadLinkAsync(string link, CancellationToken cancellationToken = default)
     {
-        var htmlWeb = new HtmlWeb();
-        var htmlDocument = await htmlWeb.LoadFromWebAsync(video.Link, cancellationToken);
-
-        var baseHtmlElement = htmlDocument.GetElementbyId("__UNIVERSAL_DATA_FOR_REHYDRATION__");
-        var baseHtmlElementJObject = JObject.Parse(baseHtmlElement.InnerText);
-
-        var videoJObject =
-            baseHtmlElementJObject["__DEFAULT_SCOPE__"]?["webapp.video-detail"]?["itemInfo"]?["itemStruct"]?["video"];
-       return videoJObject?["bitrateInfo"]?.MinBy(x => x["QualityType"]?.Value<int>())?["PlayAddr"]?["UrlList"]?.LastOrDefault()?.Value<string>();
+        var html = await HttpClient.GetStringAsync(link, cancellationToken);
+        return _tikTokVideoDownloadLinkParser.Parse(html);
     }
 
     private static Task<byte[]> DownloadVideoAsync(string downloadLink, CancellationToken cancellationToken = default)

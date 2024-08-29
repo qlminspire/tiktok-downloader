@@ -10,8 +10,9 @@ using TikTok.Downloader.Core.Services.Saver;
 
 var builder = CoconaApp.CreateBuilder();
 
-builder.Services.RegisterDownloaderDependencies();
 builder.Logging.AddConsole();
+
+builder.Services.RegisterDownloaderDependencies();
 
 var app = builder.Build();
 
@@ -42,7 +43,9 @@ app.AddCommand("json", async (ITikTokFavoriteVideosLinkParser tikTokFavoriteVide
     var tikTokVideoLinks = tikTokFavoriteVideoLinkParser.Parse(tikTokUserDataJson);
 
     if (DateTimeOffset.TryParse(afterDate, out var date))
-        tikTokVideoLinks = tikTokVideoLinks.OrderBy(link => link.Date).Where(link => link.Date.Value > date).ToList();
+        tikTokVideoLinks = tikTokVideoLinks.OrderBy(link => link.Date)
+            .Where(link => link.Date is not null && link.Date > date)
+            .ToList();
 
     if (limit.HasValue)
         tikTokVideoLinks = tikTokVideoLinks.Take(limit.Value).ToList();
