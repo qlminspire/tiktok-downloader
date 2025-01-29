@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<ITikTokDownloaderConfiguration, TikTokDownloaderConfiguration>()
             .AddSingleton<ITikTokVideoDownloader, TikTokVideoDownloader>()
+            .AddSingleton<ITikTokVideoDownloadLinkParser, TikTokVideoDownloadLinkParser>()
             .AddSingleton<ITikTokFavoriteVideosLinkParser, TikTokFavoriteVideosLinkJsonParser>()
             .AddSingleton<ITikTokVideoSaver, TikTokVideoSaver>();
 

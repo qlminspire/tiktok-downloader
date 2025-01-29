@@ -8,12 +8,12 @@
         <Nullable>enable</Nullable>
 
         <AssemblyName>tiktok-downloader</AssemblyName>
-		
+
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>tiktok-downloader</ToolCommandName>
         <PackageOutputPath>./nupkg</PackageOutputPath>
-        <ApplicationIcon>Resources\tiktok.ico</ApplicationIcon>
-        <PackageIcon>tiktok.ico</PackageIcon>
+        <!--        <ApplicationIcon>Resources\tiktok.ico</ApplicationIcon>-->
+        <!--        <PackageIcon>tiktok.ico</PackageIcon>-->
     </PropertyGroup>
 
     <ItemGroup>
